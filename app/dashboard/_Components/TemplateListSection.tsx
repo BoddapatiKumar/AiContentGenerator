@@ -17,7 +17,7 @@ export interface FORM {
   label: string;
   field: string;
   name: string;
-  requires?: boolean;
+  required?: boolean;
 }
 
 const TemplateListSection = ({ userSearchInput }: any) => {
