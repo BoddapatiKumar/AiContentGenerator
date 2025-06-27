@@ -1,17 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import FormSection from "../_Components/FormSection";
 import OutputSection from "../_Components/OutputSection";
 import { TEMPLATE } from "../../_Components/TemplateListSection";
+import { chatSession } from "@/utils/aiModel";
 
 const CreateContent = ({
   selectedTemplate,
 }: {
   selectedTemplate: TEMPLATE | undefined;
 }) => {
-  const generateAiContent = (formdata: any) => {
-    console.log("AI generation logic", formdata);
+  const [loading,setLoading]=useState(false);
+  const [aiOutput,setAiOutput]=useState<string>('')
+
+  const generateAiContent = async(formdata: any) => {
+    setLoading(true);
+    const selectedContent=selectedTemplate?.aiPrompt;
+    const finalAiPrompt=JSON.stringify(formdata)+", "+selectedContent;
+    const result= await chatSession.sendMessage(finalAiPrompt);
+    console.log(result.response.text());
+    setAiOutput(result?.response?.text())
+    setLoading(false);
   };
 
   return (
@@ -19,10 +29,11 @@ const CreateContent = ({
       <FormSection
         selectedTemplate={selectedTemplate}
         userFormInput={generateAiContent}
+        loading={loading}
       />
 
       <div className="col-span-2">
-        <OutputSection />
+        <OutputSection aiOutput={aiOutput}/>
       </div>
     </div>
   );
